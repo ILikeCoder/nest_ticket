@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "dist/main.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/dist/main.js"
+    }
+  ],
+  "env": {
+    "MYSQL_HOST": "localhost",
+    "MYSQL_PORT": "3306",
+    "MYSQL_USER": "root",
+    "MYSQL_PASSWORD": "root",
+    "MYSQL_DATABASE": "root"
+  }
+}

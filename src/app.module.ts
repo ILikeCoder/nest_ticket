@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
-import { TicketModule } from './ticket/ticket.module';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TicketModule } from './ticket/ticket.module';
+import { LoggerMiddleware } from './middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -19,4 +20,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     TicketModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('ticket');
+  }
+}

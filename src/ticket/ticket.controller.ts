@@ -35,7 +35,6 @@ export class TicketController {
   // 更新
   @Put()
   update(@Body() updateTicketDto: UpdateTicketDto) {
-    console.log(updateTicketDto);
     return this.ticketService.update(updateTicketDto);
   }
 
