@@ -7,10 +7,10 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: '47.98.106.195',
       port: 3306,
       username: 'root', // 数据库用户名
-      password: 'root', // 数据库密码
+      password: 'Aa123456@', // 数据库密码
       database: 'ticket',
       retryDelay: 500,
       retryAttempts: 5,
