@@ -12,8 +12,8 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
       username: 'root', // 数据库用户名
       password: 'Aa123456@', // 数据库密码
       database: 'ticket',
-      retryDelay: 500,
-      retryAttempts: 5,
+      retryDelay: 100,
+      retryAttempts: 1,
       synchronize: true,
       autoLoadEntities: true,
     }),
