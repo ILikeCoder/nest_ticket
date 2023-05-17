@@ -11,7 +11,7 @@ import {
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
-
+import type { User } from '../../utils/getToken';
 @Controller('ticket')
 export class TicketController {
   constructor(private readonly ticketService: TicketService) {}
@@ -31,9 +31,9 @@ export class TicketController {
   }
 
   // 根据一个模糊的手机号来查询
-  @Get(':phone')
-  findOne(@Param('phone') phone: string) {
-    return this.ticketService.findOne(phone);
+  @Post('/getToken')
+  findOne(@Body() body: User) {
+    return this.ticketService.findToken(body);
   }
 
   // 更新

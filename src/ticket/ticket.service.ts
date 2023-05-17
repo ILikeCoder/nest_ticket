@@ -4,6 +4,7 @@ import { Like, Repository } from 'typeorm';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { Ticket } from './entities/ticket.entity';
+import { getToken, User } from '../../utils/getToken';
 
 @Injectable()
 export class TicketService {
@@ -35,6 +36,9 @@ export class TicketService {
         remark: Like('%-有密%'),
       },
     });
+  }
+  async findToken(data: User) {
+    return await getToken(data);
   }
   // 根据一个模糊的手机号来查询
   findOne(phone: string) {
