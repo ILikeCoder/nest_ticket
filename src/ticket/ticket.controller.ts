@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Put,
+  Query,
 } from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
@@ -22,7 +23,10 @@ export class TicketController {
   }
   // 查询所有
   @Get()
-  async findAll() {
+  async findAll(@Query() query: any) {
+    if (!!query.password) {
+      return this.ticketService.findPasswordTicket();
+    }
     return this.ticketService.findAll();
   }
 

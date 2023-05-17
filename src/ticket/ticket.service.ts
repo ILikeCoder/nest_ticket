@@ -29,6 +29,13 @@ export class TicketService {
     });
   }
 
+  findPasswordTicket() {
+    return this.ticketService.find({
+      where: {
+        remark: Like('%-有密%'),
+      },
+    });
+  }
   // 根据一个模糊的手机号来查询
   findOne(phone: string) {
     return this.ticketService.find({

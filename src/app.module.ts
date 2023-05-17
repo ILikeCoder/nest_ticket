@@ -7,7 +7,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: '47.98.106.195',
+      host: '119.23.233.156',
       port: 3306,
       username: 'root', // 数据库用户名
       password: 'Aa123456@', // 数据库密码
