@@ -1,43 +1,40 @@
 import { Builder, By } from 'selenium-webdriver';
 import { Options } from 'selenium-webdriver/chrome';
-const options = new Options();
-options.addArguments('--headless', '--disable-gpu', '--no-sandbox');
+
+const LOGIN_URL =
+  'https://platform.sdstm.cn/main/?client_id=c62694f343a64aa28d3b14ab66806bc2&redirect_uri=https://ticket.sdstm.cn/backend/admin/manageLogin#/login';
 
 export interface User {
   remark: string;
   phone: string;
 }
-const url =
-  'https://platform.sdstm.cn/main/?client_id=c62694f343a64aa28d3b14ab66806bc2&redirect_uri=https://ticket.sdstm.cn/backend/admin/manageLogin#/login';
 
-export async function getToken(user: User) {
+export async function getToken(user) {
+  const options = new Options().addArguments(
+    '--headless',
+    '--disable-gpu',
+    '--no-sandbox',
+  );
   const browser = await new Builder()
     .forBrowser('chrome')
     .setChromeOptions(options)
     .build();
   try {
-    await browser.get(url);
+    // 打开对应的网站
+    await browser.get(LOGIN_URL);
     // 输入用户名和密码
-    const username_input = await browser.findElement(
-      By.xpath(
-        '/html/body/div/div/div/div[1]/div[2]/div[1]/div[3]/form[1]/div[1]/div/div/input',
-      ),
+    const usernameInput = await browser.findElement(
+      By.css('input[placeholder="用户名"]'),
     );
-    const password_input = await browser.findElement(
-      By.xpath(
-        '/html/body/div/div/div/div[1]/div[2]/div[1]/div[3]/form[1]/div[2]/div/div[1]/input',
-      ),
+    const passwordInput = await browser.findElement(
+      By.css('input[placeholder="密码"]'),
     );
-    await username_input.sendKeys(user.phone);
-    await password_input.sendKeys(123456);
+    await usernameInput.sendKeys(user.phone);
+    await passwordInput.sendKeys('123456');
 
-    // 找到登录按钮，点击
-    const login_button = await browser.findElement(
-      By.xpath(
-        '/html/body/div/div/div/div[1]/div[2]/div[1]/div[3]/form[1]/div[3]',
-      ),
-    );
-    await login_button.click();
+    // 点击登录按钮
+    const loginButton = await browser.findElement(By.css('.login-button'));
+    await loginButton.click();
 
     // 等待 cookie 中存在 token
     let count = 0;
@@ -48,12 +45,12 @@ export async function getToken(user: User) {
       }
       count++;
       if (count > 8) {
-        console.log(
-          `${user.remark}  token获取失败,请检查密码是否错误,或者网络环境不好`,
-        );
-        break;
+        return {
+          code: 500,
+          msg: `${user.remark}  token获取失败,请检查密码是否错误,或者网络环境不好`,
+        };
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
     }
 
@@ -73,11 +70,14 @@ export async function getToken(user: User) {
     await browser.executeScript('window.sessionStorage.clear()');
     await browser.executeScript('window.localStorage.clear()');
     // 访问网页前先删除 cookies
-    await browser.get(url);
+    await browser.get(LOGIN_URL);
     await browser.manage().deleteAllCookies();
     await browser.executeScript('window.sessionStorage.clear()');
     await browser.executeScript('window.localStorage.clear()');
-    await browser.get(url);
+    await browser.get(LOGIN_URL);
+  } catch (error) {
+    console.error(error);
+    throw error;
   } finally {
     await browser.quit();
   }
