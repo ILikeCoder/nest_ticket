@@ -49,7 +49,7 @@ export async function getToken(user: User) {
       count++;
       if (count > 8) {
         console.log(
-          `${user} token获取失败,请检查密码是否错误,或者网络环境不好`,
+          `${user.remark}  token获取失败,请检查密码是否错误,或者网络环境不好`,
         );
         break;
       } else {

@@ -11,7 +11,7 @@ import {
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
-import type { User } from '../../utils/getToken';
+import type { User } from '../utils/getToken';
 @Controller('ticket')
 export class TicketController {
   constructor(private readonly ticketService: TicketService) {}

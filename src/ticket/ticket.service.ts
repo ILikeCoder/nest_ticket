@@ -4,7 +4,7 @@ import { Like, Repository } from 'typeorm';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { Ticket } from './entities/ticket.entity';
-import { getToken, User } from '../../utils/getToken';
+import { getToken, User } from '../utils/getToken';
 
 @Injectable()
 export class TicketService {
