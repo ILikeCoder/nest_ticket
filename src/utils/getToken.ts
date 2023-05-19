@@ -45,12 +45,9 @@ export async function getToken(user) {
       }
       count++;
       if (count > 8) {
-        return {
-          code: 500,
-          msg: `${user.remark}  token获取失败,请检查密码是否错误,或者网络环境不好`,
-        };
+        return null;
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 
