@@ -15,12 +15,12 @@ export class OrderService {
   }
 
   async createOrUpdate(order: Order): Promise<Order> {
-    const { phone, date } = order;
+    const { phone, count } = order;
     const existingOrder = await this.orderRepository.findOne({
-      where: { phone, date },
+      where: { phone },
     });
     if (existingOrder) {
-      existingOrder.count += 1;
+      existingOrder.count += count;
       await this.orderRepository.save(existingOrder);
       return existingOrder;
     } else {
@@ -29,18 +29,22 @@ export class OrderService {
   }
 
   async update(order: Order): Promise<Order> {
+    const { phone, count } = order;
     const existingOrder = await this.orderRepository.findOne({
-      where: { phone: order.phone, date: order.date },
+      where: { phone },
     });
     if (!existingOrder) {
       throw new NotFoundException(`Order not found`);
     }
-    existingOrder.count -= 1;
+    existingOrder.count -= count;
     if (existingOrder.count <= 0) {
       await this.orderRepository.remove(existingOrder);
     } else {
       await this.orderRepository.save(existingOrder);
     }
     return existingOrder;
+  }
+  remove(order: Order) {
+    return this.orderRepository.remove(order);
   }
 }
