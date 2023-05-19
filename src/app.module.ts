@@ -2,6 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TicketModule } from './ticket/ticket.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
       autoLoadEntities: true,
     }),
     TicketModule,
+    OrderModule,
   ],
 })
 export class AppModule implements NestModule {
