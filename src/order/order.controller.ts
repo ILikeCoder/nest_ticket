@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Put, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+} from '@nestjs/common';
 import { Order } from './entities/order.entity';
 import { OrderService } from './order.service';
 
@@ -8,17 +16,21 @@ export class OrderController {
 
   // 查询所有
   @Get()
-  async findAll() {
+  findAll() {
     return this.orderService.findAll();
   }
 
   @Post()
-  async createOrUpdateOrder(@Body() order: Order): Promise<Order> {
+  createOrUpdateOrder(@Body() order: Order): Promise<Order> {
     return this.orderService.createOrUpdate(order);
   }
 
   @Put()
-  async updateOrder(@Body() order: Order): Promise<Order> {
+  updateOrder(@Body() order: Order): Promise<Order> {
     return this.orderService.update(order);
+  }
+  @Delete(':phone')
+  deleteOrder(@Param() phone: string) {
+    return this.orderService.delete(phone);
   }
 }

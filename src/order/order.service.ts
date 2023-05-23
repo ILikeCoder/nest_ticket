@@ -47,4 +47,7 @@ export class OrderService {
   remove(order: Order) {
     return this.orderRepository.remove(order);
   }
+  delete(phone: string) {
+    return this.orderRepository.delete(phone);
+  }
 }
