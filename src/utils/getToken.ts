@@ -30,7 +30,20 @@ export async function getToken(user) {
       By.css('input[placeholder="密码"]'),
     );
     await usernameInput.sendKeys(user.phone);
-    await passwordInput.sendKeys('123456');
+    const extraPhone = [
+      '13655383851',
+      '15064126456',
+      '18653444506',
+      '15288852596',
+      '13409094120',
+      '19315749293',
+      '13434288880',
+    ];
+    if (extraPhone.includes(user.phone)) {
+      await passwordInput.sendKeys('sunshine1.');
+    } else {
+      await passwordInput.sendKeys('123456');
+    }
 
     // 点击登录按钮
     const loginButton = await browser.findElement(By.css('.login-button'));
