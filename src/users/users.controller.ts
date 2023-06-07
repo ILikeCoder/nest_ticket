@@ -64,8 +64,9 @@ export class UsersController {
         l,
       ) as any[];
       for (const [index] of data.entries()) {
-        data[index].userName = result.hackInfos[index].userName;
-        data[index].documentNum = result.hackInfos[index].documentNum;
+        data[index].userName = result.hackInfos[index + constans[c]].userName;
+        data[index].documentNum =
+          result.hackInfos[index + constans[c]].documentNum;
       }
       return data;
     } else {
