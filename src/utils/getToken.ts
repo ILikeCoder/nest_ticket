@@ -1,6 +1,5 @@
 import { Builder, By } from 'selenium-webdriver';
 import { Options } from 'selenium-webdriver/chrome';
-
 const LOGIN_URL =
   'https://platform.sdstm.cn/main/?client_id=c62694f343a64aa28d3b14ab66806bc2&redirect_uri=https://ticket.sdstm.cn/backend/admin/manageLogin#/login';
 
@@ -92,3 +91,23 @@ export async function getToken(user) {
     await browser.quit();
   }
 }
+
+// 接口传递过来的参数，删除掉随机参数，传递给后端进行查询
+export function del_radom_mima(str, indices = [0, 3, 5, 6, 10]) {
+  let result = '';
+  for (let i = 0; i < str.length; i++) {
+    if (!indices.includes(i)) {
+      // 不在要删除的位置中
+      result += str.charAt(i); // 将字符添加到结果中
+    }
+  }
+  return result.substring(0, 13);
+}
+
+export const constans = {
+  '622bef718fd86': 0,
+  '2f3531121a798': 1,
+  eec98f50f6fee: 2,
+  b68dcce136b7b: 3,
+  '33c0b3f4e497b': 4,
+};

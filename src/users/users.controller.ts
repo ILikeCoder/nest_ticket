@@ -1,9 +1,9 @@
 import {
   Controller,
   Get,
+  Query,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
 } from '@nestjs/common';
@@ -11,7 +11,8 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { getToken } from 'src/utils/getToken';
-
+import axios from 'axios';
+import { del_radom_mima, constans } from '../utils/getToken';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -38,6 +39,44 @@ export class UsersController {
     };
   }
 
+  @Get('/order')
+  async findOrder(@Query() query) {
+    const { m, c: c1, l, d } = query;
+    const sb = del_radom_mima(m);
+    const c = del_radom_mima(c1);
+    const result = await this.usersService.findOne(sb);
+
+    const orders = await axios.post(
+      'https://ticket.sdstm.cn/backend/operate/wx/orderDetails',
+      {
+        orderId: d,
+      },
+      {
+        headers: {
+          Authorization: result.token,
+        },
+      },
+    );
+
+    if (l) {
+      const data = orders.data.data.orderDetailsList.slice(
+        constans[c],
+        l,
+      ) as any[];
+      for (const [index] of data.entries()) {
+        data[index].userName = result.hackInfos[index].userName;
+        data[index].documentNum = result.hackInfos[index].documentNum;
+      }
+      return data;
+    } else {
+      orders.data.data.orderDetailsList[constans[c]].userName =
+        result.hackInfos[constans[c]].userName;
+      orders.data.data.orderDetailsList[constans[c]].documentNum =
+        result.hackInfos[constans[c]].documentNum;
+      return [orders.data.data.orderDetailsList[constans[c]]];
+    }
+  }
+
   @Get()
   findAll() {
     return this.usersService.findAll();
@@ -48,7 +87,7 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @Patch(':id')
+  @Post(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }

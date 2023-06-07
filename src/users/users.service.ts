@@ -19,10 +19,10 @@ export class UsersService {
     return this.userService.find();
   }
 
-  findOne(phone: string) {
+  findOne(sb: string) {
     return this.userService.findOne({
       where: {
-        phone,
+        sb,
       },
     });
   }
