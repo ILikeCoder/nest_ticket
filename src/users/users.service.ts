@@ -27,6 +27,13 @@ export class UsersService {
       },
     });
   }
+  findPhoneOne(phone: string) {
+    return this.userService.findOne({
+      where: {
+        phone,
+      },
+    });
+  }
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
