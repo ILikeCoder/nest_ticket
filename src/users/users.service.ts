@@ -42,7 +42,7 @@ export class UsersService {
   remove(id: number) {
     return `This action removes a #${id} user`;
   }
-  @Cron('0 0 */11 * * *')
+  @Cron('0 0 */6 * * *')
   async handleCron() {
     const findAll = await this.findAll();
     for (const item of findAll) {
