@@ -60,4 +60,7 @@ export class UsersService {
     }
     console.log('更新所有token完成了', findAll);
   }
+  async autoUpdate() {
+    await this.handleCron();
+  }
 }
