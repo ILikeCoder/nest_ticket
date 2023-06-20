@@ -55,6 +55,6 @@ export class TicketController {
   @Get('/order')
   async findOrder(@Query() query) {
     const { m, d, c, l } = query;
-    this.ticketService.findOrderDetail(m, d, c, l);
+    return this.ticketService.findOrderDetail(m, d, c, l);
   }
 }
