@@ -3,6 +3,10 @@ import { UserInfo } from '../entities/ticket.entity';
 import { CreateTicketDto } from './create-ticket.dto';
 
 export class UpdateTicketDto extends PartialType(CreateTicketDto) {
-  id: number;
-  userInfos: UserInfo[];
+  id?: number;
+  userInfos?: UserInfo[];
+  token?: string;
+  count?: number;
+  sb?: string;
+  weekDay?: string;
 }

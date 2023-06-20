@@ -11,7 +11,6 @@ import {
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
-import type { User } from '../utils/getToken';
 @Controller('ticket')
 export class TicketController {
   constructor(private readonly ticketService: TicketService) {}
@@ -21,30 +20,41 @@ export class TicketController {
   create(@Body() createTicketDto: CreateTicketDto) {
     return this.ticketService.create(createTicketDto);
   }
-  // 查询所有
-  @Get()
-  async findAll(@Query() query: any) {
-    if (!!query.password) {
-      return this.ticketService.findPasswordTicket();
-    }
-    return this.ticketService.findAll();
-  }
-
-  // 根据一个模糊的手机号来查询
-  @Post('/getToken')
-  findOne(@Body() body: User) {
-    return this.ticketService.findToken(body);
-  }
-
-  // 更新
-  @Put()
-  update(@Body() updateTicketDto: UpdateTicketDto) {
-    return this.ticketService.update(updateTicketDto);
-  }
 
   // 删除
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.ticketService.remove(id);
+    return this.ticketService.remove(+id);
+  }
+
+  // 更新
+  @Put()
+  update(@Body() updateUserDto: UpdateTicketDto) {
+    return this.ticketService.update(updateUserDto);
+  }
+
+  // 查询所有
+  @Get()
+  async findAll() {
+    return this.ticketService.findAll();
+  }
+
+  @Post('/updateToken')
+  async updateOneToken(@Body() body) {
+    return this.ticketService.updateOneToken(body);
+  }
+  // 更新一遍所有token
+  @Post('/updateToken/all')
+  async updateToken() {
+    await this.ticketService.updateToken();
+    return {
+      code: 200,
+      message: '更新所有Token完毕',
+    };
+  }
+  @Get('/order')
+  async findOrder(@Query() query) {
+    const { m, d, c, l } = query;
+    this.ticketService.findOrderDetail(m, d, c, l);
   }
 }
