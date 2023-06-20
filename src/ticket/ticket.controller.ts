@@ -45,16 +45,6 @@ export class TicketController {
     return this.ticketService.updateOneToken(body);
   }
 
-  // 更新一遍所有token
-  @Post('/updateToken/all')
-  async updateToken() {
-    await this.ticketService.updateToken();
-    return {
-      code: 200,
-      message: '更新所有Token完毕',
-    };
-  }
-
   // 查动态二维码
   @Get('/order')
   async findOrder(@Query() query) {

@@ -194,8 +194,4 @@ export class TicketService {
     }
     console.log('更新所有token完成了', findAll);
   }
-  // 手动执行一次更新Token操作
-  async updateToken() {
-    await this.handleCron();
-  }
 }
