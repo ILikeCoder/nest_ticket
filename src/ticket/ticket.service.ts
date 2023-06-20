@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cron } from '@nestjs/schedule';
@@ -5,16 +6,19 @@ import { Repository } from 'typeorm';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { Ticket } from './entities/ticket.entity';
-import { getToken } from '../utils/getToken';
-import { getRandomIdentityCard } from 'src/utils/generateCode';
-import { encryptString } from '../utils/encrypt';
+import {
+  getRandomIdentityCard,
+  encryptString,
+  getToken,
+  del_radom_mima,
+} from '../utils';
+import { TicketIndex } from '../utils/constans';
 import {
   insertPersonApi,
   getPersonDataListApi,
   deletePersonApi,
-} from '../utils/getWeek';
-import { del_radom_mima, constans } from '../utils/getToken';
-import axios from 'axios';
+} from '../utils/apis';
+
 @Injectable()
 export class TicketService {
   constructor(
@@ -75,6 +79,7 @@ export class TicketService {
     }
     return this.ticketRepository.delete(id);
   }
+
   // 更新
   update(updateTicketDto: UpdateTicketDto) {
     if (updateTicketDto.phone)
@@ -84,8 +89,9 @@ export class TicketService {
       );
     return this.ticketRepository.update(updateTicketDto.id, updateTicketDto);
   }
-  // 查找单个
-  findOne(sb: string) {
+
+  // 查找单个sb
+  findSbOne(sb: string) {
     return this.ticketRepository.findOne({
       where: {
         sb,
@@ -101,10 +107,12 @@ export class TicketService {
       },
     });
   }
+
+  // 查订单二维码
   async findOrderDetail(m, d, c, l) {
     const sb = del_radom_mima(m);
     c = del_radom_mima(c);
-    const result = await this.findOne(sb);
+    const result = await this.findSbOne(sb);
     const orders = await axios.post(
       'https://ticket.sdstm.cn/backend/operate/wx/orderDetails',
       {
@@ -119,24 +127,25 @@ export class TicketService {
 
     if (l) {
       const data = orders.data.data.orderDetailsList.slice(
-        constans[c],
+        TicketIndex[c],
         l,
       ) as any[];
       for (const [index] of data.entries()) {
-        data[index].userName = result.hackInfos[index + constans[c]].userName;
+        data[index].userName =
+          result.hackInfos[index + TicketIndex[c]].userName;
         data[index].documentNum =
-          result.hackInfos[index + constans[c]].documentNum;
+          result.hackInfos[index + TicketIndex[c]].documentNum;
       }
       return data;
-    } else {
-      orders.data.data.orderDetailsList[constans[c]].userName =
-        result.hackInfos[constans[c]].userName;
-      orders.data.data.orderDetailsList[constans[c]].documentNum =
-        result.hackInfos[constans[c]].documentNum;
-      return [orders.data.data.orderDetailsList[constans[c]]];
     }
+    orders.data.data.orderDetailsList[TicketIndex[c]].userName =
+      result.hackInfos[TicketIndex[c]].userName;
+    orders.data.data.orderDetailsList[TicketIndex[c]].documentNum =
+      result.hackInfos[TicketIndex[c]].documentNum;
+    return [orders.data.data.orderDetailsList[TicketIndex[c]]];
   }
 
+  //根据手机号查找
   findPhoneOne(phone: string) {
     return this.ticketRepository.findOne({
       where: {
@@ -145,6 +154,7 @@ export class TicketService {
     });
   }
 
+  // 更新某一个账号 token
   async updateOneToken(body) {
     const { phone } = body;
     const findOne = await this.findPhoneOne(phone);

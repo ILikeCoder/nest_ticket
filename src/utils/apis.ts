@@ -1,11 +1,4 @@
-import dayjs from 'dayjs';
 import axios from 'axios';
-export function getWeekDay(date: string) {
-  const day = dayjs(date).day();
-  const week = ['日', '一', '二', '三', '四', '五', '六'];
-  return `${date}  ||  星期${week[day]}`;
-}
-
 export const insertPersonApi = async (data, token) => {
   const url =
     'https://seep.sdstm.cn/ticket/backend/operate/wx/insertIndividualRelevanceCustomer';

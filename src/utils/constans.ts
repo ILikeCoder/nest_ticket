@@ -1,4 +1,16 @@
-const randomIdentityCard = [
+export interface User {
+  remark: string;
+  phone: string;
+  password: string;
+}
+export enum TicketIndex {
+  '622bef718fd86' = 0,
+  '2f3531121a798' = 1,
+  'eec98f50f6fee' = 2,
+  'b68dcce136b7b' = 3,
+  '33c0b3f4e497b' = 4,
+}
+export const randomIdentityCard = [
   {
     name: '马敏',
     card: '370104199503074067',
@@ -100,12 +112,3 @@ const randomIdentityCard = [
     card: '370104199503073689',
   },
 ];
-export function getRandomIdentityCard() {
-  const result: { name: string; card: string }[] = [];
-  while (result.length < 5) {
-    const randomIndex = Math.floor(Math.random() * randomIdentityCard.length);
-    const randomItem = randomIdentityCard[randomIndex];
-    if (randomItem) result.push(randomItem);
-    return result;
-  }
-}

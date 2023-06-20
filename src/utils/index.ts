@@ -1,15 +1,11 @@
 import { Builder, By } from 'selenium-webdriver';
 import { Options } from 'selenium-webdriver/chrome';
-const LOGIN_URL =
-  'https://platform.sdstm.cn/main/?client_id=c62694f343a64aa28d3b14ab66806bc2&redirect_uri=https://ticket.sdstm.cn/backend/admin/manageLogin#/login';
-
-export interface User {
-  remark: string;
-  phone: string;
-  password: string;
-}
+import * as CryptoJS from 'crypto-js';
+import { randomIdentityCard, type User } from './constans';
 
 export async function getToken(user: User) {
+  const LOGIN_URL =
+    'https://platform.sdstm.cn/main/?client_id=c62694f343a64aa28d3b14ab66806bc2&redirect_uri=https://ticket.sdstm.cn/backend/admin/manageLogin#/login';
   const options = new Options().addArguments(
     '--headless',
     '--disable-gpu',
@@ -93,10 +89,19 @@ export function del_radom_mima(str, indices = [0, 3, 5, 6, 10]) {
   return result.substring(0, 13);
 }
 
-export const constans = {
-  '622bef718fd86': 0,
-  '2f3531121a798': 1,
-  eec98f50f6fee: 2,
-  b68dcce136b7b: 3,
-  '33c0b3f4e497b': 4,
-};
+// 手机号加密 存储到数据库 作为唯一标识
+export function encryptString(phone) {
+  const hash = CryptoJS.MD5(phone + 'adsfl');
+  const encryptedData = hash.toString();
+  return encryptedData.substring(0, 13);
+}
+// 获取5个随机身份证
+export function getRandomIdentityCard() {
+  const result: { name: string; card: string }[] = [];
+  while (result.length < 5) {
+    const randomIndex = Math.floor(Math.random() * randomIdentityCard.length);
+    const randomItem = randomIdentityCard[randomIndex];
+    if (randomItem) result.push(randomItem);
+    return result;
+  }
+}

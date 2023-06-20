@@ -39,10 +39,12 @@ export class TicketController {
     return this.ticketService.findAll();
   }
 
+  // 更新一个token
   @Post('/updateToken')
   async updateOneToken(@Body() body) {
     return this.ticketService.updateOneToken(body);
   }
+
   // 更新一遍所有token
   @Post('/updateToken/all')
   async updateToken() {
@@ -52,6 +54,8 @@ export class TicketController {
       message: '更新所有Token完毕',
     };
   }
+
+  // 查动态二维码
   @Get('/order')
   async findOrder(@Query() query) {
     const { m, d, c, l } = query;
