@@ -1,7 +1,8 @@
 import axios from 'axios';
+const baseURL = 'https://ticket.sdstm.cn/backend/operate/wx';
+axios.defaults.baseURL = baseURL;
 export const insertPersonApi = async (data, token) => {
-  const url =
-    'https://seep.sdstm.cn/ticket/backend/operate/wx/insertIndividualRelevanceCustomer';
+  const url = '/insertIndividualRelevanceCustomer';
   const res = await axios.post(url, data, {
     headers: {
       Authorization: token,
@@ -10,8 +11,7 @@ export const insertPersonApi = async (data, token) => {
   return res;
 };
 export const getPersonDataListApi = (token) => {
-  const url =
-    'https://seep.sdstm.cn/ticket/backend/operate/wx/relevanceCustomerList/';
+  const url = '/relevanceCustomerList/';
   return axios.get(url, {
     headers: {
       Authorization: token,
@@ -19,7 +19,7 @@ export const getPersonDataListApi = (token) => {
   });
 };
 export const deletePersonApi = (id, token) => {
-  const url = `https://seep.sdstm.cn/ticket/backend/operate/wx/deleteIndividualRelevanceCustomerById/${id}`;
+  const url = `/deleteIndividualRelevanceCustomerById/${id}`;
   return axios.post(
     url,
     {},

@@ -102,6 +102,6 @@ export function getRandomIdentityCard() {
     const randomIndex = Math.floor(Math.random() * randomIdentityCard.length);
     const randomItem = randomIdentityCard[randomIndex];
     if (randomItem) result.push(randomItem);
-    return result;
   }
+  return result;
 }
