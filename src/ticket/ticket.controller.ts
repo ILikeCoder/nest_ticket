@@ -46,9 +46,9 @@ export class TicketController {
   }
 
   // 查动态二维码
-  @Get('/order')
-  async findOrder(@Query() query) {
-    const { m, d, c, l } = query;
+  @Get('/order/:m/:d/:c/:l?')
+  async findOrder(@Param() params) {
+    const { m, d, c, l } = params;
     return this.ticketService.findOrderDetail(m, d, c, l);
   }
 }
