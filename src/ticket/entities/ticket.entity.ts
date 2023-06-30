@@ -16,7 +16,7 @@ export class Ticket {
   @Column()
   remark: string;
 
-  @Column()
+  @Column({ unique: true })
   phone: string;
 
   @Column({ nullable: true })
@@ -25,7 +25,7 @@ export class Ticket {
   @Column({ nullable: true })
   token: string;
 
-  @Column({ default: 0 })
+  @Column({ nullable: true })
   count: number;
 
   @Column({ nullable: true })

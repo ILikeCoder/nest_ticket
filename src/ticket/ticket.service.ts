@@ -82,11 +82,24 @@ export class TicketService {
 
   // 更新
   update(updateTicketDto: UpdateTicketDto) {
-    if (updateTicketDto.phone)
+    if (updateTicketDto.phone) {
+      if (updateTicketDto.count === 1) {
+        return this.ticketRepository.update(
+          { phone: updateTicketDto.phone },
+          {
+            count: null,
+            weekDay: null,
+          },
+        );
+      }
       return this.ticketRepository.update(
         { phone: updateTicketDto.phone },
-        { count: updateTicketDto.count, weekDay: updateTicketDto.weekDay },
+        {
+          count: updateTicketDto.count,
+          weekDay: updateTicketDto.weekDay,
+        },
       );
+    }
     return this.ticketRepository.update(updateTicketDto.id, updateTicketDto);
   }
 
