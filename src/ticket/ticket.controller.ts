@@ -33,10 +33,14 @@ export class TicketController {
     return this.ticketService.update(updateUserDto);
   }
 
+  @Get('/filter/date')
+  async getFilterDate() {
+    return this.ticketService.getFilterDate();
+  }
   // 查询所有
   @Get()
-  async findAll() {
-    return this.ticketService.findAll();
+  findAll(@Query() { page, pageSize, weekDay }) {
+    return this.ticketService.findAll({ page, pageSize, weekDay });
   }
 
   // 更新一个token

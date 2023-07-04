@@ -2,10 +2,11 @@ import axios from 'axios';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cron } from '@nestjs/schedule';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { Ticket } from './entities/ticket.entity';
+import { LoggerService } from '../logger/logger.service';
 import {
   getRandomIdentityCard,
   encryptString,
@@ -24,6 +25,7 @@ export class TicketService {
   constructor(
     @InjectRepository(Ticket)
     private readonly ticketRepository: Repository<Ticket>,
+    private readonly loggerService: LoggerService,
   ) {}
 
   // 创建
@@ -112,13 +114,45 @@ export class TicketService {
     });
   }
 
-  // 查询所有
-  findAll() {
-    return this.ticketRepository.find({
-      order: {
+  // 查询数据
+  async findAll(params: {
+    page: string;
+    pageSize: string;
+    weekDay?: string[];
+  }) {
+    const { page, pageSize, weekDay } = params;
+    let where = {};
+    let order = {};
+    if (weekDay && weekDay.length > 0) {
+      where = {
+        weekDay: In(weekDay),
+      };
+      order = {
+        weekDay: 'ASC',
+      };
+    } else {
+      order = {
         id: 'DESC',
+      };
+    }
+    const [items, total] = await Promise.all([
+      this.ticketRepository.find({
+        order,
+        take: Number(pageSize),
+        skip: (Number(page) - 1) * Number(pageSize),
+        where,
+      }),
+      this.ticketRepository.count({
+        where,
+      }),
+    ]);
+    return {
+      code: 200,
+      data: {
+        items,
+        total,
       },
-    });
+    };
   }
 
   // 查订单二维码
@@ -186,11 +220,23 @@ export class TicketService {
     };
   }
 
-  // 定时任务
-  @Cron('0 0 */6 * * *')
-  async handleCron() {
-    const findAll = await this.findAll();
-    for (const item of findAll) {
+  // 获取已有的票数信息
+  getFilterDate() {
+    // const statement = `SELECT weekDay,SUM(count) AS total FROM ticket WHERE weekDay IS NOT NULL GROUP BY weekDay ORDER BY weekDay;`;
+    // return this.ticketRepository.query(statement);
+    return this.ticketRepository
+      .createQueryBuilder('ticket')
+      .select('ticket.weekDay', 'weekDay')
+      .addSelect('SUM(ticket.count)', 'total')
+      .where('ticket.weekDay IS NOT NULL')
+      .groupBy('ticket.weekDay')
+      .orderBy('ticket.weekDay')
+      .getRawMany();
+  }
+
+  async handleUpdateToken() {
+    const findAll = await this.findAll({ page: '1', pageSize: '1000' });
+    for (const item of findAll.data.items.filter((item) => item.weekDay)) {
       const res = await getToken({
         remark: item.remark,
         phone: item.phone,
@@ -198,13 +244,34 @@ export class TicketService {
       });
       const token = 'Bearer ' + res.token;
       await this.update({ id: item.id, token });
-      console.log(
+      this.loggerService.ticket(
         `${
           item.phone
         }更新 token 完成，当前时间：${new Date().toLocaleString()}`,
       );
-      await new Promise((resolve) => setTimeout(resolve, 10 * 1000)); // 延迟 30秒 分钟
+      await new Promise((resolve) => setTimeout(resolve, 10 * 1000)); // 延迟 10秒 分钟
     }
-    console.log('更新所有token完成了', findAll);
+  }
+  // 定时任务 星期二-星期5 早上7点执行
+  @Cron('0 7 * * 2-5')
+  async handleWeekDayCron() {
+    this.loggerService.ticket(
+      `定时任务开始执行了 当前时间:${new Date().toLocaleString()}`,
+    );
+    await this.handleUpdateToken();
+    this.loggerService.ticket(
+      `更新周内有票的token完成了 当前时间:${new Date().toLocaleString()}`,
+    );
+  }
+  // 定时任务 星期六-星期日 早上7点和9点执行
+  @Cron('0 7,9 * * 6,0')
+  async handleWeekEndCron() {
+    this.loggerService.ticket(
+      `定时任务开始执行了 当前时间:${new Date().toLocaleString()}`,
+    );
+    await this.handleUpdateToken();
+    this.loggerService.ticket(
+      `更新周末有票的token完成了 当前时间:${new Date().toLocaleString()}`,
+    );
   }
 }

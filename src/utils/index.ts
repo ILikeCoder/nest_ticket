@@ -41,7 +41,7 @@ export async function getToken(user: User) {
         break;
       }
       count++;
-      if (count > 8) {
+      if (count > 16) {
         return null;
       } else {
         await new Promise((resolve) => setTimeout(resolve, 1000));

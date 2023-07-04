@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TicketModule } from './ticket/ticket.module';
+import { LoggerModule } from './logger/logger.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -16,6 +17,7 @@ import { TicketModule } from './ticket/ticket.module';
       autoLoadEntities: true,
     }),
     TicketModule,
+    LoggerModule,
   ],
 })
 export class AppModule {}
