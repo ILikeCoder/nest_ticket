@@ -46,7 +46,6 @@ export class Ticket {
   @Column({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
   })
   updateAt: Date;
 }
