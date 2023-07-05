@@ -19,7 +19,7 @@ import {
   getPersonDataListApi,
   deletePersonApi,
 } from '../utils/apis';
-
+import * as dayjs from 'dayjs';
 @Injectable()
 export class TicketService {
   constructor(
@@ -146,6 +146,9 @@ export class TicketService {
         where,
       }),
     ]);
+    items.forEach((item: any) => {
+      item.updateAt = dayjs(item.updateAt).format('MM-DD HH:mm:ss');
+    });
     return {
       code: 200,
       data: {
