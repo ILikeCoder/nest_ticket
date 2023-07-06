@@ -238,25 +238,45 @@ export class TicketService {
   }
 
   async handleUpdateToken() {
-    const findAll = await this.findAll({ page: '1', pageSize: '1000' });
-    for (const item of findAll.data.items.filter((item) => item.weekDay)) {
-      const res = await getToken({
-        remark: item.remark,
-        phone: item.phone,
-        password: item.password,
-      });
-      const token = 'Bearer ' + res.token;
-      await this.update({ id: item.id, token });
-      this.loggerService.ticket(
-        `${
-          item.phone
-        }更新 token 完成，当前时间：${new Date().toLocaleString()}`,
-      );
-      await new Promise((resolve) => setTimeout(resolve, 10 * 1000)); // 延迟 10秒 分钟
+    const maxRetries = 5; // 最大重试次数
+    try {
+      const result = await this.ticketRepository.find();
+      for (const item of result.filter((item) => item.weekDay)) {
+        let retries = 0;
+        let success = false;
+        while (retries < maxRetries && !success) {
+          try {
+            const res = await getToken({
+              remark: item.remark,
+              phone: item.phone,
+              password: item.password,
+            });
+            const token = 'Bearer ' + res.token;
+            await this.update({ id: item.id, token });
+            success = true; // 更新成功标志
+          } catch (error) {
+            retries++; // 递增重试次数
+            this.loggerService.ticket(`更新token失败,重试次数:${retries}`);
+            await new Promise((resolve) => setTimeout(resolve, 15 * 1000)); // 延迟 15 秒钟
+          }
+        }
+        if (success) {
+          this.loggerService.ticket(
+            `${
+              item.phone
+            } 更新 token 完成，当前时间：${new Date().toLocaleString()}`,
+          );
+        } else {
+          this.loggerService.ticket(`更新 token 失败，达到最大重试次数`);
+        }
+      }
+    } catch (error) {
+      this.loggerService.ticket(`获取数据失败：${error.message}`);
     }
   }
+
   // 定时任务 星期二-星期5 早上7点执行
-  @Cron('0 7 * * 2-5')
+  @Cron('0 10 * * 2-5')
   async handleWeekDayCron() {
     this.loggerService.ticket(
       `定时任务开始执行了 当前时间:${new Date().toLocaleString()}`,
