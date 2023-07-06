@@ -238,7 +238,7 @@ export class TicketService {
   }
 
   async handleUpdateToken() {
-    const maxRetries = 5; // 最大重试次数
+    const maxRetries = 8; // 最大重试次数
     try {
       const result = await this.ticketRepository.find();
       for (const item of result.filter((item) => item.weekDay)) {
@@ -256,14 +256,16 @@ export class TicketService {
             success = true; // 更新成功标志
           } catch (error) {
             retries++; // 递增重试次数
-            this.loggerService.ticket(`更新token失败,重试次数:${retries}`);
+            this.loggerService.ticket(
+              `${item.remark} 更新token失败,重试次数:${retries}`,
+            );
             await new Promise((resolve) => setTimeout(resolve, 15 * 1000)); // 延迟 15 秒钟
           }
         }
         if (success) {
           this.loggerService.ticket(
             `${
-              item.phone
+              item.remark
             } 更新 token 完成，当前时间：${new Date().toLocaleString()}`,
           );
         } else {
