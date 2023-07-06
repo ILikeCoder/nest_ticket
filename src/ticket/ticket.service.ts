@@ -275,8 +275,8 @@ export class TicketService {
     }
   }
 
-  // 定时任务 星期二-星期5 早上7点执行
-  @Cron('0 10 * * 2-5')
+  // 定时任务 星期二-星期5 早上6点执行
+  @Cron('0 6 * * 2-5')
   async handleWeekDayCron() {
     this.loggerService.ticket(
       `定时任务开始执行了 当前时间:${new Date().toLocaleString()}`,
@@ -286,8 +286,8 @@ export class TicketService {
       `更新周内有票的token完成了 当前时间:${new Date().toLocaleString()}`,
     );
   }
-  // 定时任务 星期六-星期日 早上7点和9点执行
-  @Cron('0 7,9 * * 6,0')
+  // 定时任务 星期六-星期日 早上6点和9点执行
+  @Cron('0 6,9 * * 6,0')
   async handleWeekEndCron() {
     this.loggerService.ticket(
       `定时任务开始执行了 当前时间:${new Date().toLocaleString()}`,
