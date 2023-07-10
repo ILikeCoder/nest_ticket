@@ -120,7 +120,7 @@ export class TicketService {
     pageSize: string;
     weekDay?: string[];
   }) {
-    const { page, pageSize, weekDay } = params;
+    const { page = 1, pageSize = 10, weekDay } = params;
     let where = {};
     let order = {};
     if (weekDay && weekDay.length > 0) {
