@@ -232,16 +232,22 @@ export class TicketService {
       .select('ticket.weekDay', 'weekDay')
       .addSelect('SUM(ticket.count)', 'total')
       .where('ticket.weekDay IS NOT NULL')
+      .andWhere('ticket.count IS NOT NULL')
       .groupBy('ticket.weekDay')
       .orderBy('ticket.weekDay')
       .getRawMany();
   }
 
-  async handleUpdateToken() {
+  /**
+   *
+   * @param isTuesday 是否是周二
+   */
+  async handleUpdateToken(isTuesday: boolean) {
     const maxRetries = 8; // 最大重试次数
     try {
-      const result = await this.ticketRepository.find();
-      for (const item of result.filter((item) => item.weekDay)) {
+      let result = await this.ticketRepository.find();
+      if (!isTuesday) result = result.filter((item) => item.weekDay);
+      for (const item of result) {
         let retries = 0;
         let success = false;
         while (retries < maxRetries && !success) {
@@ -277,26 +283,26 @@ export class TicketService {
     }
   }
 
-  // 定时任务 星期二-星期5 早上6点执行
-  @Cron('0 6 * * 2-5')
+  // 定时任务 星期二 早上6点执行
+  @Cron('0 6 * * 2')
+  async handleTuesDayCron() {
+    this.loggerService.ticket(
+      `定时任务开始执行了 当前时间:${new Date().toLocaleString()}`,
+    );
+    await this.handleUpdateToken(true);
+    this.loggerService.ticket(
+      `更新周二的所有token完成了 当前时间:${new Date().toLocaleString()}`,
+    );
+  }
+  // 定时任务 星期三-星期天 早上6点执行
+  @Cron('0 6 * * 3-0')
   async handleWeekDayCron() {
     this.loggerService.ticket(
       `定时任务开始执行了 当前时间:${new Date().toLocaleString()}`,
     );
-    await this.handleUpdateToken();
+    await this.handleUpdateToken(false);
     this.loggerService.ticket(
-      `更新周内有票的token完成了 当前时间:${new Date().toLocaleString()}`,
-    );
-  }
-  // 定时任务 星期六-星期日 早上6点和9点执行
-  @Cron('0 6,9 * * 6,0')
-  async handleWeekEndCron() {
-    this.loggerService.ticket(
-      `定时任务开始执行了 当前时间:${new Date().toLocaleString()}`,
-    );
-    await this.handleUpdateToken();
-    this.loggerService.ticket(
-      `更新周末有票的token完成了 当前时间:${new Date().toLocaleString()}`,
+      `更新周三-周天有票的token完成了 当前时间:${new Date().toLocaleString()}`,
     );
   }
 }
