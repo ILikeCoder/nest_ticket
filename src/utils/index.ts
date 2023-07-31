@@ -2,6 +2,7 @@ import { Builder, By } from 'selenium-webdriver';
 import { Options } from 'selenium-webdriver/chrome';
 import * as CryptoJS from 'crypto-js';
 import { randomIdentityCard, type User } from './constans';
+import axios, { AxiosProxyConfig } from 'axios';
 
 export async function getToken(user: User) {
   const LOGIN_URL =
@@ -91,7 +92,7 @@ export function del_radom_mima(str, indices = [0, 3, 5, 6, 10]) {
 
 // 手机号加密 存储到数据库 作为唯一标识
 export function encryptString(phone) {
-  const hash = CryptoJS.MD5(phone + 'adsfl');
+  const hash = CryptoJS.MD5(phone + 'sqy555666sqy');
   const encryptedData = hash.toString();
   return encryptedData.substring(0, 13);
 }
@@ -104,4 +105,19 @@ export function getRandomIdentityCard() {
     if (randomItem) result.push(randomItem);
   }
   return result;
+}
+
+export async function getProxy(): Promise<AxiosProxyConfig> {
+  const proxy = await axios.get(
+    'https://service.ipzan.com/core-extract?num=1&no=20230428084434660179&minute=1&format=txt&repeat=1&protocol=1&pool=ordinary&mode=whitelist&secret=hopkumabgcjfto',
+  );
+
+  if (proxy) {
+    const [host, port] = proxy.data.split(':');
+    return {
+      host,
+      port: Number(port),
+    };
+  }
+  return null;
 }

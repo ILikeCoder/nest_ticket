@@ -23,6 +23,7 @@
     "@types/cors": "^2.8.13",
     "@types/selenium-webdriver": "^4.1.14",
     "axios": "^1.4.0",
+    "axios-https-proxy-fix": "^0.17.1",
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.7",

@@ -4,11 +4,11 @@ export interface User {
   password: string;
 }
 export enum TicketIndex {
-  '622bef718fd86' = 0,
-  '2f3531121a798' = 1,
-  'eec98f50f6fee' = 2,
-  'b68dcce136b7b' = 3,
-  '33c0b3f4e497b' = 4,
+  '12b4dad532ece' = 0,
+  '6af67e8d6be83' = 1,
+  '8faf3825690c8' = 2,
+  'eeb144947a664' = 3,
+  '6047ac564b328' = 4,
 }
 export const randomIdentityCard = [
   {

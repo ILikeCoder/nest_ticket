@@ -55,4 +55,8 @@ export class TicketController {
     const { m, d, c, l } = params;
     return this.ticketService.findOrderDetail(m, d, c, l);
   }
+  @Get('/update/info')
+  updateInfo() {
+    this.ticketService.updateInfo();
+  }
 }

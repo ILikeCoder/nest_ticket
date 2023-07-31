@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { Injectable } from '@nestjs/common';
+import axios from 'axios-https-proxy-fix';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cron } from '@nestjs/schedule';
 import { In, Repository } from 'typeorm';
@@ -12,6 +12,7 @@ import {
   encryptString,
   getToken,
   del_radom_mima,
+  getProxy,
 } from '../utils';
 import { TicketIndex } from '../utils/constans';
 import {
@@ -162,37 +163,45 @@ export class TicketService {
   async findOrderDetail(m, d, c, l) {
     const sb = del_radom_mima(m);
     c = del_radom_mima(c);
-    const result = await this.findSbOne(sb);
-    const orders = await axios.post(
-      'https://ticket.sdstm.cn/backend/operate/wx/orderDetails',
-      {
-        orderId: d,
-      },
-      {
-        headers: {
-          Authorization: result.token,
+    try {
+      const result = await this.findSbOne(sb);
+      const proxy = await getProxy();
+      const orders = await axios.post(
+        'https://ticket.sdstm.cn/backend/operate/wx/orderDetails',
+        {
+          orderId: d,
         },
-      },
-    );
+        {
+          proxy,
+          headers: {
+            Authorization: result.token,
+          },
+        },
+      );
 
-    if (l) {
-      const data = orders.data.data.orderDetailsList.slice(
-        TicketIndex[c],
-        l,
-      ) as any[];
-      for (const [index] of data.entries()) {
-        data[index].userName =
-          result.hackInfos[index + TicketIndex[c]].userName;
-        data[index].documentNum =
-          result.hackInfos[index + TicketIndex[c]].documentNum;
+      if (l) {
+        const data = orders.data.data.orderDetailsList.slice(
+          TicketIndex[c],
+          l,
+        ) as any[];
+        for (const [index] of data.entries()) {
+          data[index].userName =
+            result.hackInfos[index + TicketIndex[c]].userName;
+          data[index].documentNum =
+            result.hackInfos[index + TicketIndex[c]].documentNum;
+        }
+        return data;
       }
-      return data;
+      orders.data.data.orderDetailsList[TicketIndex[c]].userName =
+        result.hackInfos[TicketIndex[c]].userName;
+      orders.data.data.orderDetailsList[TicketIndex[c]].documentNum =
+        result.hackInfos[TicketIndex[c]].documentNum;
+      return [orders.data.data.orderDetailsList[TicketIndex[c]]];
+    } catch (err) {
+      const error = err.response.data.error;
+      this.loggerService.error(error);
+      throw new HttpException(error, 500);
     }
-    orders.data.data.orderDetailsList[TicketIndex[c]].userName =
-      result.hackInfos[TicketIndex[c]].userName;
-    orders.data.data.orderDetailsList[TicketIndex[c]].documentNum =
-      result.hackInfos[TicketIndex[c]].documentNum;
-    return [orders.data.data.orderDetailsList[TicketIndex[c]]];
   }
 
   //根据手机号查找
@@ -304,5 +313,19 @@ export class TicketService {
     this.loggerService.ticket(
       `更新周三-周天有票的token完成了 当前时间:${new Date().toLocaleString()}`,
     );
+  }
+  // 更新sb和密码
+  async updateInfo() {
+    const res = await this.ticketRepository.find();
+    for (const item of res) {
+      const phone = item.phone;
+      const sb = await encryptString(phone);
+      await this.update({
+        id: item.id,
+        sb,
+        password: `A${phone}.`,
+      });
+    }
+    return this.ticketRepository.find();
   }
 }

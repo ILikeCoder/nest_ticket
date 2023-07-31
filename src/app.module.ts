@@ -9,7 +9,7 @@ import { LoggerModule } from './logger/logger.module';
       host: '119.23.233.156',
       port: 3306,
       username: 'root', // 数据库用户名
-      password: 'Aa123456@', // 数据库密码
+      password: 'Sqy010617.', // 数据库密码
       database: 'ticket',
       retryDelay: 100,
       retryAttempts: 1,
