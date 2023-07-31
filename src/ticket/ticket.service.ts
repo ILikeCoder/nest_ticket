@@ -7,12 +7,13 @@ import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { Ticket } from './entities/ticket.entity';
 import { LoggerService } from '../logger/logger.service';
-import maskIdCard, {
+import {
   getRandomIdentityCard,
   encryptString,
   getToken,
   del_radom_mima,
   getProxy,
+  maskIdCard,
 } from '../utils';
 import { TicketIndex } from '../utils/constans';
 import {
