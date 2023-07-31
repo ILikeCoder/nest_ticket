@@ -121,3 +121,13 @@ export async function getProxy(): Promise<AxiosProxyConfig> {
   }
   return null;
 }
+
+export default function maskIdCard(idCard) {
+  if (idCard.length === 18) {
+    return idCard.substring(0, 6) + '*'.repeat(8) + idCard.substring(14);
+  } else if (idCard.length === 15) {
+    return idCard.substring(0, 6) + '*'.repeat(3) + idCard.substring(9);
+  } else {
+    return idCard;
+  }
+}

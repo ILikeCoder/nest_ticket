@@ -7,7 +7,7 @@ import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { Ticket } from './entities/ticket.entity';
 import { LoggerService } from '../logger/logger.service';
-import {
+import maskIdCard, {
   getRandomIdentityCard,
   encryptString,
   getToken,
@@ -187,15 +187,16 @@ export class TicketService {
         for (const [index] of data.entries()) {
           data[index].userName =
             result.hackInfos[index + TicketIndex[c]].userName;
-          data[index].documentNum =
-            result.hackInfos[index + TicketIndex[c]].documentNum;
+          data[index].documentNum = maskIdCard(
+            result.hackInfos[index + TicketIndex[c]].documentNum,
+          );
         }
         return data;
       }
       orders.data.data.orderDetailsList[TicketIndex[c]].userName =
         result.hackInfos[TicketIndex[c]].userName;
       orders.data.data.orderDetailsList[TicketIndex[c]].documentNum =
-        result.hackInfos[TicketIndex[c]].documentNum;
+        maskIdCard(result.hackInfos[TicketIndex[c]].documentNum);
       return [orders.data.data.orderDetailsList[TicketIndex[c]]];
     } catch (err) {
       const error = err.response.data.error;
