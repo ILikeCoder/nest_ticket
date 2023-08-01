@@ -109,7 +109,7 @@ export function getRandomIdentityCard() {
 
 export async function getProxy(): Promise<AxiosProxyConfig> {
   const proxy = await axios.get(
-    'https://service.ipzan.com/core-extract?num=1&no=20230428084434660179&minute=1&format=txt&repeat=1&protocol=1&pool=ordinary&mode=whitelist&secret=hopkumabgcjfto',
+    'https://service.ipzan.com/core-extract?num=1&no=20230703045248326745&minute=1&format=txt&repeat=1&protocol=1&pool=quality&mode=whitelist&secret=25droi9atuklrg',
   );
 
   if (proxy) {
