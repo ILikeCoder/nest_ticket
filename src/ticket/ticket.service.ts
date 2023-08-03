@@ -166,14 +166,14 @@ export class TicketService {
     c = del_radom_mima(c);
     try {
       const result = await this.findSbOne(sb);
-      const proxy = await getProxy();
+      // const proxy = await getProxy();
       const orders = await axios.post(
         'https://ticket.sdstm.cn/backend/operate/wx/orderDetails',
         {
           orderId: d,
         },
         {
-          proxy,
+          // proxy,
           headers: {
             Authorization: result.token,
           },
