@@ -44,26 +44,25 @@ export class TicketService {
       sb,
       token,
     });
-    const identityCardList = getRandomIdentityCard();
-
-    for (const item of identityCardList) {
-      await insertPersonApi(
-        {
-          identityCodeType: '0',
-          identityCodeTypeName: '身份证',
-          imgPath: '',
-          telephone: '',
-          name: item.name,
-          identityCode: item.card,
-        },
-        token,
-      );
-    }
-    const result = await getPersonDataListApi(token);
-    await this.update({
-      id: user.id,
-      userInfos: result.data.data,
-    });
+    // const identityCardList = getRandomIdentityCard();
+    // for (const item of identityCardList) {
+    //   await insertPersonApi(
+    //     {
+    //       identityCodeType: '0',
+    //       identityCodeTypeName: '身份证',
+    //       imgPath: '',
+    //       telephone: '',
+    //       name: item.name,
+    //       identityCode: item.card,
+    //     },
+    //     token,
+    //   );
+    // }
+    // const result = await getPersonDataListApi(token);
+    // await this.update({
+    //   id: user.id,
+    //   userInfos: result.data.data,
+    // });
     return {
       code: 200,
       message: '添加账号成功',
