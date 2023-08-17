@@ -294,7 +294,7 @@ export class TicketService {
   }
 
   // 定时任务 星期二 早上6点执行
-  @Cron('0 6 * * 2')
+  // @Cron('0 6 * * 2')
   async handleTuesDayCron() {
     this.loggerService.ticket(
       `定时任务开始执行了 当前时间:${new Date().toLocaleString()}`,
@@ -305,7 +305,7 @@ export class TicketService {
     );
   }
   // 定时任务 星期三-星期天 早上6点执行
-  @Cron('0 6 * * 3-0')
+  // @Cron('0 6 * * 3-0')
   async handleWeekDayCron() {
     this.loggerService.ticket(
       `定时任务开始执行了 当前时间:${new Date().toLocaleString()}`,
